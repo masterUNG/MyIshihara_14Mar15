@@ -186,6 +186,7 @@ public class MainActivity extends ActionBarActivity {
 
             //Intent to ShowScore
             Intent objIntent = new Intent(MainActivity.this, ShowScoreActivity.class);
+            objIntent.putExtra("Score", intScore);
             startActivity(objIntent);
             finish();
 
