@@ -1,6 +1,8 @@
 package appewtc.masterung.myishihara_14mar15;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,16 +13,20 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class MainActivity extends ActionBarActivity {
 
     //Explicit
     private TextView txtQuestion;
-    private ImageView imvIshihara;
+    private ImageView imvIshihara, imvHome;
     private RadioGroup ragChoice;
     private RadioButton radChoice1, radChoice2, radChoice3, radChoice4;
     private Button btnAnswer;
+    private int intRadio, intIndex;
+    private MyModel objMyModel;
+    private String[] strChoice;
 
 
     @Override
@@ -34,7 +40,100 @@ public class MainActivity extends ActionBarActivity {
         //Button Controller
         buttonController();
 
+        //Radio Controller
+        radioController();
+
+        //GoHome
+        goHome();
+
+        //About MyModel
+        aboutMyModel();
+
+
     }   // onCreate
+
+    private void aboutMyModel() {
+        objMyModel = new MyModel();
+
+        objMyModel.setOnMyModelChangeListener(new MyModel.OnMyModelChangeListener() {
+            @Override
+            public void onMyModelChangeListener(MyModel myModel) {
+
+                //Change View by Model
+                changeView(myModel.getIntButton());
+
+            }   // event
+        });
+
+    }   // aboutMyModel
+
+    private void changeView(int intModel) {
+
+        int[] intIshihara = new int[]{R.drawable.ishihara_01, R.drawable.ishihara_02,
+                R.drawable.ishihara_03, R.drawable.ishihara_04,
+                R.drawable.ishihara_05, R.drawable.ishihara_06,
+                R.drawable.ishihara_07, R.drawable.ishihara_08,
+                R.drawable.ishihara_09, R.drawable.ishihara_10};
+
+        //Change Image
+        imvIshihara.setImageResource(intIshihara[intModel]);
+
+        //Change Choice
+
+        int[] intChoice = new int[]{R.array.times1, R.array.times2, R.array.times3,
+                R.array.times4, R.array.times5, R.array.times6, R.array.times7,
+                R.array.times8, R.array.times9, R.array.times10};
+
+        strChoice = getResources().getStringArray(intChoice[intModel]);
+        radChoice1.setText(strChoice[0]);
+        radChoice2.setText(strChoice[1]);
+        radChoice3.setText(strChoice[2]);
+        radChoice4.setText(strChoice[3]);
+        
+    }   // changeView
+
+    private void goHome() {
+        imvHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent objIntent = new Intent(Intent.ACTION_VIEW);
+                objIntent.setData(Uri.parse("http://androidthai.in.th"));
+                startActivity(objIntent);
+            }
+        });
+    }
+
+    private void radioController() {
+        ragChoice.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+                //Sound Effect
+                MediaPlayer soundRadio = MediaPlayer.create(getBaseContext(), R.raw.effect_btn_shut);
+                soundRadio.start();
+
+                //SetUp intRadio
+                switch (checkedId) {
+                    case R.id.radioButton:
+                        intRadio = 1;
+                        break;
+                    case R.id.radioButton2:
+                        intRadio = 2;
+                        break;
+                    case R.id.radioButton3:
+                        intRadio = 3;
+                        break;
+                    case R.id.radioButton4:
+                        intRadio = 4;
+                        break;
+                    default:
+                        intRadio = 0;
+                        break;
+                }   // switch
+
+            }   // event
+        });
+    }
 
     private void buttonController() {
         btnAnswer.setOnClickListener(new View.OnClickListener() {
@@ -45,9 +144,49 @@ public class MainActivity extends ActionBarActivity {
                 MediaPlayer soundButton = MediaPlayer.create(getBaseContext(), R.raw.effect_btn_long);
                 soundButton.start();
 
+                //Check Answer
+                checkAnswer();
+
+
             }   // event
         });
     }
+
+    private void checkAnswer() {
+
+        if (intRadio == 0) {
+            Toast.makeText(MainActivity.this, "กรุณาตอบคำถาม ด้วยคะ", Toast.LENGTH_SHORT).show();
+        } else {
+
+            //Check Times
+            checkTimes();
+
+        }   // if
+
+    }   // checkAnswer
+
+    private void checkTimes() {
+
+        if (intIndex == 9) {
+
+            //Intent to ShowScore
+            Intent objIntent = new Intent(MainActivity.this, ShowScoreActivity.class);
+            startActivity(objIntent);
+            finish();
+
+        } else {
+
+            //Controller Call View
+            txtQuestion.setText(Integer.toString(intIndex + 2) + ". What is this ?");
+
+            intIndex += 1;
+
+            //Controller Call Model
+            objMyModel.setIntButton(intIndex);
+
+        }   // if
+
+    }   // checkTimes
 
     private void bindWidget() {
 
@@ -59,6 +198,7 @@ public class MainActivity extends ActionBarActivity {
         radChoice3 = (RadioButton) findViewById(R.id.radioButton3);
         radChoice4 = (RadioButton) findViewById(R.id.radioButton4);
         btnAnswer = (Button) findViewById(R.id.button);
+        imvHome = (ImageView) findViewById(R.id.imageView2);
 
     }   // bindWidget
 
