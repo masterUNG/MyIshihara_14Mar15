@@ -24,7 +24,7 @@ public class MainActivity extends ActionBarActivity {
     private RadioGroup ragChoice;
     private RadioButton radChoice1, radChoice2, radChoice3, radChoice4;
     private Button btnAnswer;
-    private int intRadio, intIndex;
+    private int intRadio, intIndex, intScore, intUser[], intAnswer[];
     private MyModel objMyModel;
     private String[] strChoice;
 
@@ -89,7 +89,7 @@ public class MainActivity extends ActionBarActivity {
         radChoice2.setText(strChoice[1]);
         radChoice3.setText(strChoice[2]);
         radChoice4.setText(strChoice[3]);
-        
+
     }   // changeView
 
     private void goHome() {
@@ -158,12 +158,27 @@ public class MainActivity extends ActionBarActivity {
             Toast.makeText(MainActivity.this, "กรุณาตอบคำถาม ด้วยคะ", Toast.LENGTH_SHORT).show();
         } else {
 
+            //Check Score
+            checkScore();
+
             //Check Times
             checkTimes();
 
         }   // if
 
     }   // checkAnswer
+
+    private void checkScore() {
+
+        intAnswer = new int[]{1, 2, 3, 1, 2, 3, 1, 2, 4, 4};
+        intUser = new int[10];
+        intUser[intIndex] = intRadio;
+        if (intUser[intIndex] == intAnswer[intIndex]) {
+            intScore += 1;
+        }
+
+    }   // checkScore
+
 
     private void checkTimes() {
 
